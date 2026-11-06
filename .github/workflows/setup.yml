@@ -40,8 +40,11 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Android SDK kur
-        uses: android-actions/setup-android@v3
+            - name: Android SDK kur
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          yes | sdkmanager --licenses || true
+
 
       - name: Gradle kur
         uses: gradle/actions/setup-gradle@v4
