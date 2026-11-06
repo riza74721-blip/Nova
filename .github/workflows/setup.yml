@@ -1,62 +1,87 @@
-name: Nova APK Kurulumu
+name: Nova Android APK
 
 on:
   workflow_dispatch:
   push:
-    paths:
-      - 'NovaAndroid-source.zip'
-      - '.github/workflows/setup.yml'
+    branches: [main]
+  pull_request:
 
 permissions:
   contents: read
 
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
     steps:
-      - name: Kaynak dosyalarini al
+      - name: Kaynak kodunu al
         uses: actions/checkout@v4
 
-      - name: ZIP dosyasini ac
-        run: |
-          python3 - <<'PY'
-          import zipfile
-          from pathlib import Path
-          with zipfile.ZipFile("NovaAndroid-source.zip") as z:
-              for item in z.infolist():
-                  parts = Path(item.filename).parts
-                  if not parts or parts[0] != "NovaAndroid" or item.is_dir():
-                      continue
-                  dest = Path(*parts[1:])
-                  if not dest.parts or ".." in dest.parts:
-                      raise ValueError("Gecersiz ZIP yolu")
-                  dest.parent.mkdir(parents=True, exist_ok=True)
-                  dest.write_bytes(z.read(item))
-          PY
-
-      - name: Java kur
+      - name: Java 17 kur
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
 
-            - name: Android SDK kur
-        run: |
-          echo "ANDROID_HOME=$ANDROID_HOME"
-          yes | sdkmanager --licenses || true
-
-
-      - name: Gradle kur
-        uses: gradle/actions/setup-gradle@v4
+      - name: Android SDK kur
+        uses: android-actions/setup-android@v3
         with:
-          gradle-version: '8.9'
+          # Varsayilan legacy "tools" paketi artik SDK deposunda bulunmuyor.
+          packages: 'platform-tools platforms;android-35 build-tools;35.0.0'
+          log-accepted-android-sdk-licenses: false
 
-      - name: APK olustur
-        run: gradle :app:assembleDebug --no-daemon
+      - name: Gradle onbellegini hazirla ve wrapper'i dogrula
+        uses: gradle/actions/setup-gradle@v4
 
-      - name: APK dosyasini sakla
+      - name: Birim testleri, lint ve APK derlemesi
+        run: ./gradlew --no-daemon --stacktrace testDebugUnitTest lintDebug assembleDebug assembleDebugAndroidTest
+
+      - name: APK imzasini ve paketini dogrula
+        run: |
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose app/build/outputs/apk/debug/app-debug.apk
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging app/build/outputs/apk/debug/app-debug.apk
+          cd app/build/outputs/apk/debug
+          sha256sum app-debug.apk > app-debug.apk.sha256
+
+      - name: Emulator icin KVM erisimini ac
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Android 15 emulatorunde uygulamayi test et
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: default
+          arch: x86_64
+          profile: pixel_2
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: ./gradlew --no-daemon --stacktrace connectedDebugAndroidTest
+
+      - name: Dogrulanan APK dosyasini sakla
         uses: actions/upload-artifact@v4
         with:
           name: Nova-APK
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: |
+            app/build/outputs/apk/debug/app-debug.apk
+            app/build/outputs/apk/debug/app-debug.apk.sha256
           if-no-files-found: error
+          retention-days: 30
+
+      - name: Test ve lint raporlarini sakla
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Nova-test-raporlari
+          path: |
+            app/build/reports/
+            app/build/test-results/
+            app/build/outputs/androidTest-results/
+          if-no-files-found: warn
+          retention-days: 14
