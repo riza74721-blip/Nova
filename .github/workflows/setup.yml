@@ -1,0 +1,59 @@
+name: Nova APK Kurulumu
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'NovaAndroid-source.zip'
+      - '.github/workflows/setup.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Kaynak dosyalarini al
+        uses: actions/checkout@v4
+
+      - name: ZIP dosyasini ac
+        run: |
+          python3 - <<'PY'
+          import zipfile
+          from pathlib import Path
+          with zipfile.ZipFile("NovaAndroid-source.zip") as z:
+              for item in z.infolist():
+                  parts = Path(item.filename).parts
+                  if not parts or parts[0] != "NovaAndroid" or item.is_dir():
+                      continue
+                  dest = Path(*parts[1:])
+                  if not dest.parts or ".." in dest.parts:
+                      raise ValueError("Gecersiz ZIP yolu")
+                  dest.parent.mkdir(parents=True, exist_ok=True)
+                  dest.write_bytes(z.read(item))
+          PY
+
+      - name: Java kur
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Android SDK kur
+        uses: android-actions/setup-android@v3
+
+      - name: Gradle kur
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: APK olustur
+        run: gradle :app:assembleDebug --no-daemon
+
+      - name: APK dosyasini sakla
+        uses: actions/upload-artifact@v4
+        with:
+          name: Nova-APK
+          path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
