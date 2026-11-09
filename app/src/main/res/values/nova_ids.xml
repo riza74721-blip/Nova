@@ -1,0 +1,19 @@
+<resources>
+    <item name="nova_screen" type="id" />
+    <item name="nova_input" type="id" />
+    <item name="nova_send" type="id" />
+    <item name="nova_microphone" type="id" />
+    <item name="nova_settings" type="id" />
+    <item name="nova_clear_history" type="id" />
+    <item name="nova_voice_status" type="id" />
+    <item name="nova_messages" type="id" />
+    <item name="nova_scroll" type="id" />
+    <item name="nova_state" type="id" />
+    <item name="nova_state_detail" type="id" />
+    <item name="nova_partial" type="id" />
+    <item name="nova_orb" type="id" />
+    <item name="nova_suggestion_time" type="id" />
+    <item name="nova_suggestion_help" type="id" />
+    <item name="nova_suggestion_note" type="id" />
+    <item name="nova_suggestion_math" type="id" />
+</resources>

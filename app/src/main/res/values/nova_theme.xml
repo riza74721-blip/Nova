@@ -1,0 +1,13 @@
+<resources>
+    <style name="Theme.Nova" parent="android:style/Theme.Material.NoActionBar">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:windowBackground">@color/nova_background</item>
+        <item name="android:colorAccent">@color/nova_mint</item>
+        <item name="android:colorControlActivated">@color/nova_mint</item>
+        <item name="android:statusBarColor">@color/nova_background</item>
+        <item name="android:navigationBarColor">@color/nova_background</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
+    </style>
+</resources>

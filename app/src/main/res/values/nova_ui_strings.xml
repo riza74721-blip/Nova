@@ -1,0 +1,32 @@
+<resources>
+    <string name="nova_app_name">NOVA</string>
+    <string name="nova_eyebrow">KİŞİSEL ASİSTANIN</string>
+    <string name="nova_greeting">Merhaba, ben Nova.</string>
+    <string name="nova_greeting_named">Merhaba, ben %1$s.</string>
+    <string name="nova_intro">Aklındakini söyle ya da yaz.</string>
+    <string name="nova_mic_hint">Mikrofona dokun ve konuş</string>
+    <string name="nova_suggest_time">Saati öğren</string>
+    <string name="nova_suggest_time_query">Saat kaç?</string>
+    <string name="nova_suggest_help">Neler yapabilirsin?</string>
+    <string name="nova_suggest_help_query">Neler yapabilirsin?</string>
+    <string name="nova_suggest_note">Bir not bırak</string>
+    <string name="nova_suggest_note_query">Not al</string>
+    <string name="nova_suggest_math">Bir hesap yap</string>
+    <string name="nova_suggest_math_query">Hesapla</string>
+    <string name="nova_ready_detail">Konuşmaya hazır. İstersen yazarak da başlayabilirsin.</string>
+    <string name="nova_state_ready">HAZIR</string>
+    <string name="nova_state_listening">DİNLİYOR</string>
+    <string name="nova_state_processing">İŞLİYOR</string>
+    <string name="nova_state_speaking">KONUŞUYOR</string>
+    <string name="nova_state_error">DİKKAT</string>
+    <string name="nova_input_hint">Nova’ya bir şey yaz…</string>
+    <string name="nova_input_description">Nova’ya mesaj yaz</string>
+    <string name="nova_send">Mesajı gönder</string>
+    <string name="nova_start_listening">Konuşmayı başlat</string>
+    <string name="nova_stop">Dinlemeyi veya sesli yanıtı durdur</string>
+    <string name="nova_settings">Ses ve uygulama ayarları</string>
+    <string name="nova_clear_history">Sohbet geçmişini temizle</string>
+    <string name="nova_you">SEN</string>
+    <string name="nova_voice_setup_description">%1$s. Ses ayarlarını açmak için dokun.</string>
+    <string name="nova_voice_setup_action">Ses ayarlarını aç ›</string>
+</resources>

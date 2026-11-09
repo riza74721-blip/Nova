@@ -1,0 +1,10 @@
+<resources>
+    <item name="nova_voice_enabled" type="id" />
+    <item name="nova_voice_test" type="id" />
+    <item name="nova_voice_rate" type="id" />
+    <item name="nova_voice_pitch" type="id" />
+    <item name="nova_name" type="id" />
+    <item name="nova_voice_setup" type="id" />
+    <item name="nova_recognition_setup" type="id" />
+    <item name="nova_close_settings" type="id" />
+</resources>
